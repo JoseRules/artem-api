@@ -1,8 +1,8 @@
-FROM openjdk:17-jdk-slim AS builder
+FROM eclipse-temurin:23-jdk AS builder
 WORKDIR /app
 COPY . .
 RUN ./mvnw clean package -DskipTests
-FROM openjdk:17-jre-slim
+FROM eclipse-temurin:23-jre
 WORKDIR /app
 COPY --from=builder /app/target/*.jar app.jar
 EXPOSE 8080
