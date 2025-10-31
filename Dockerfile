@@ -1,5 +1,9 @@
-FROM openjdk:17-jdk-slim
-ARG JAR_FILE=target/artem-api-0.0.1.jar
-COPY ${JAR_FILE} artem_api.jar
+FROM openjdk:17-jdk-slim AS builder
+WORKDIR /app
+COPY . .
+RUN ./mvnw clean package -DskipTests
+FROM openjdk:17-jre-slim
+WORKDIR /app
+COPY --from=builder /app/target/*.jar app.jar
 EXPOSE 8080
-ENTRYPOINT [ "java", "-jar", "artem_api.jar"]
+ENTRYPOINT [ "java", "-jar", "app.jar"]
