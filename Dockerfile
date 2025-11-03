@@ -1,6 +1,7 @@
 FROM eclipse-temurin:23-jdk AS builder
 WORKDIR /app
 COPY . .
+RUN chmod +x ./mvnw
 RUN ./mvnw clean package
 FROM eclipse-temurin:23-jre
 WORKDIR /app
