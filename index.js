@@ -10,7 +10,7 @@ app.get('/', (req, res) => {
 })
 
 app.use('/api/users', require('./routes/userRoutes'));
-
+app.use('/api/appointments', require('./routes/appointmentRoutes.js'));
 
 mongoose.connect("mongodb+srv://josepplx_db_user:A7JHEnnqiwhvko83@cluster0.lgpd3lu.mongodb.net/?appName=Cluster0&retryWrites=true")
   .then(() => {
@@ -19,4 +19,4 @@ mongoose.connect("mongodb+srv://josepplx_db_user:A7JHEnnqiwhvko83@cluster0.lgpd3
       console.log(`Example app listening on port ${3000}`)
     })
   })
-  .catch(e => console.log(e));
+  .catch(e => console.log(e.message));

@@ -12,6 +12,7 @@
   "description": "API for ARTEM project",
   "dependencies": {
     "express": "^5.2.1",
+    "express-async-handler": "^1.2.0",
     "mongoose": "^9.3.0",
     "zod": "^4.3.6"
   },
