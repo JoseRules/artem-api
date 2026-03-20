@@ -24,4 +24,14 @@ const appointmentSchema = mongoose.Schema({
   notes: String
 }, { timestamps: true });
 
+appointmentSchema.index(
+  { doctor: 1, date: 1 },
+  {
+    unique: true,
+    partialFilterExpression: {
+      status: { $in: ["scheduled", "completed"] }
+    }
+  }
+);
+
 module.exports = mongoose.model("Appointment", appointmentSchema);
