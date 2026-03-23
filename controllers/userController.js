@@ -1,6 +1,7 @@
 const { z } = require("zod");
 const User = require('../models/user.model.js');
 const asyncHandler = require('express-async-handler');
+const bcrypt = require('bcrypt');
 
 const userSchema = z.object({
   firstname: z.string().min(1),
@@ -25,6 +26,21 @@ const getAllUsers = asyncHandler(async (req, res) => {
   }
 })
 
+const login = asyncHandler(async (req, res) => {
+  const { email, password } = req.body;
+
+  const user = await User.findOne({ email }).select("+password");
+  if (!user) {
+    return res.status(404).json({ message: "User not found" });
+  }
+  const isMatch = await bcrypt.compare(password, user.password);
+  if (!isMatch) {
+    return res.status(401).json({ message: "Invalid credentials" });
+  }
+
+  user.password = undefined;
+  res.json(user);
+})
 
 const createNewUser = asyncHandler(async (req, res) => {
   const result = userSchema.safeParse(req.body);
@@ -36,32 +52,39 @@ const createNewUser = asyncHandler(async (req, res) => {
 
     return res.status(400).json({ errors: formattedErrors });
   }
-  User.create(req.body)
-    .then(item => res.status(201).json(item))
-    .catch(error => {
-      if (error.code === 11000) {
-        const field = Object.keys(error.keyPattern)[0];
-        return res.status(400).json({
-          message: `${field} already exists`,
-        });
-      }
-      if (error.name === "ValidationError") {
 
-        const errors = Object.values(error.errors).map(err => ({
-          field: err.path,
-          message: err.message
-        }));
+  const saltRounds = 10;
+  const hashedPassword = await bcrypt.hash(req.body.password, saltRounds);
+  const userBody = { ...req.body, password: hashedPassword };
 
-        return res.status(400).json({
-          message: "Validation failed",
-          errors
-        });
-      }
-
-      res.status(500).json({
-        message: "Internal server error"
+  try {
+    const user = await User.create(userBody);
+    const cleanUser = await User.findById(user._id);
+    res.json(cleanUser);
+  } catch (error) {
+    if (error.code === 11000) {
+      const field = Object.keys(error.keyPattern)[0];
+      return res.status(400).json({
+        message: `${field} already exists`,
       });
-    })
+    }
+    if (error.name === "ValidationError") {
+
+      const errors = Object.values(error.errors).map(err => ({
+        field: err.path,
+        message: err.message
+      }));
+
+      return res.status(400).json({
+        message: "Validation failed",
+        errors
+      });
+    }
+
+    res.status(500).json({
+      message: "Internal server error"
+    });
+  }
 })
 
 const updateUser = asyncHandler(async (req, res) => {
@@ -98,5 +121,6 @@ module.exports = {
   createNewUser,
   getAllUsers,
   updateUser,
-  deleteUser
+  deleteUser,
+  login
 }

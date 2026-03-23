@@ -13,6 +13,7 @@ app.get('/', (req, res) => {
 
 app.use('/api/users', require('./routes/userRoutes.js'));
 app.use('/api/appointments', require('./routes/appointmentRoutes.js'));
+app.use('/api/login', require('./routes/loginRoute.js'));
 
 mongoose.connect(process.env.MONGO_URI)
   .then(() => {
