@@ -14,10 +14,10 @@ const getAllUsers = asyncHandler(async (req, res) => {
     const { email, specialty } = req.query;
     const query = {};
     if (email) {
-      query.email = email;
+      query.email = { $regex: email, $options: "i" };
     }
     if (specialty) {
-      query.specialty = specialty;
+      query.specialty = { $regex: specialty, $options: "i" };
     }
     const users = await User.find(query);
     res.json(users);
