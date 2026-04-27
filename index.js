@@ -3,9 +3,8 @@ const express = require('express')
 const mongoose = require('mongoose')
 const app = express()
 const cors = require('cors');
-const dns = require('node:dns/promises');
-
-dns.setServers(["1.1.1.1", "8.8.8.8"]);
+//const dns = require('node:dns/promises');
+//dns.setServers(["1.1.1.1", "8.8.8.8"]);
 
 app.use(cors());
 app.use(express.json())
