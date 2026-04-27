@@ -1,4 +1,5 @@
 const Appointment = require('../models/appointment.model.js');
+const User = require('../models/user.model.js');
 
 const getAppointmentsByUser = async (req, res) => {
   try {
@@ -20,6 +21,17 @@ const getAppointmentsByUser = async (req, res) => {
   }
 };
 
+const getUserById = async (req, res) => {
+  try {
+    const { userId } = req.params;
+    const user = await User.findById(userId);
+    res.json(user);
+  } catch (error) {
+    res.status(500).json({ message: err.message });
+  }
+}
+
 module.exports = {
-  getAppointmentsByUser
+  getAppointmentsByUser,
+  getUserById
 }

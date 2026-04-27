@@ -18,8 +18,9 @@ const createAppointment = asyncHandler(async (req, res) => {
   try {
     console.log(req.body);
     const { doctor, patient, notes, date } = req.body;
-
+    console.log("doctor", doctor)
     const doctorUser = await User.findById(doctor);
+    console.log("doctorUser", doctorUser)
     if (!doctorUser || doctorUser.role !== "doctor") {
       return res.status(400).json({ message: "Invalid doctor" });
     }
